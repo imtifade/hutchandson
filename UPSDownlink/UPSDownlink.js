@@ -176,6 +176,8 @@ define(['N/runtime', 'N/sftp', 'N/record', 'N/search', 'N/file'],
                 ignoreFieldChange: true
             });
 
+            if (csvCurLineData[2] != 0){
+
             curRecord.insertLine({
                 sublistId: 'item',
                 line: numLines,
@@ -208,6 +210,8 @@ define(['N/runtime', 'N/sftp', 'N/record', 'N/search', 'N/file'],
                 line: numLines,
                 value: "SHIPPING CHARGES"
             });
+
+        }
 
 
         }
