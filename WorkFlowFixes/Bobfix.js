@@ -19,15 +19,37 @@ define(['N/currentRecord', 'N/ui/dialog'],
                 fieldId: 'shipmethod'           // defines the customer entity
             });
 
-            if (!shippingMethod){
+            entity = record.getValue({
+                fieldId: 'entity'           // defines the customer entity
+            });
+
+            if (!shippingMethod) {
+
+                function success(result) {
+
+                    var customerURL = 'https://1204410.app.netsuite.com/app/common/entity/custjob.nl?id=' + entity + "&e=T&selectedtab=preferences&stage=Customer";
+
+                    windowObjectReference = window.open(
+                        customerURL,
+                        "Customer",
+                        "resizable,scrollbars,status"
+                      );
+
+                }
+                function failure(reason) { console.log('Failure: ' + reason) }
 
                 dialog.alert({
                     title: 'HEY BOB',
-                    message: 'You forgot the ship method please fix. Thank you'
-                });
+                    message: "Looks like you missed the ship method. Lets set the defualt. You just need to scroll down in this new window and set the right SHIPMETHOD and save it and exit the window. Then just fix the ship Method on this page."
+                }).then(success).catch(failure);
 
             }
 
+            else {
+
+                return true;
+
+            }
 
         }
 
