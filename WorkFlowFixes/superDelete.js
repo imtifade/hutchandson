@@ -13,7 +13,20 @@ define(['N/ui/dialog', 'N/record', 'N/currentRecord'],
 
         function superDelete (context){
 
-            deleteCS_INV_IF();
+            var options = {
+                title: "Super Delete",
+                message: "Deleteing all generated documents and returning to sales order."
+             };
+            function success(result) { 
+
+                deleteCS_INV_IF();
+                
+            }
+            function failure(reason) { 
+                console.log("Failure: " + reason); 
+            }
+     
+            dialog.confirm(options).then(success).catch(failure); 
 
         }
 
