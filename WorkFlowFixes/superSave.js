@@ -3,83 +3,89 @@
  *@NScriptType UserEventScript
  */
 
- //Release Codename: fuck the flow
+//Release Codename: fuck the flow
 define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
-    function (record, redirect, serverWidget,  search, file) {
+    function (record, redirect, serverWidget, search, file) {
         function beforeLoad(context) {
 
             if (context.type == 'create') {
 
-
-                var entity = context.newRecord.getValue({
-                    fieldId: 'entity'
+                var superSaved = context.newRecord.getValue({
+                    fieldId: 'custbody_supersaved'
                 });
 
-                var createdfrom = context.newRecord.getValue({
-                    fieldId: 'createdfrom'
-                });
+                if (superSaved) {
 
+                    var createdfrom = context.newRecord.getValue({
+                        fieldId: 'createdfrom'
+                    });
 
-
-                if (entity == 509 && !checkForBackorder(createdfrom, context.form)) {
-
-                    var objFulfillment = record.transform({
-                        fromType: record.Type.SALES_ORDER,
-                        fromId: createdfrom,
-                        toType: record.Type.ITEM_FULFILLMENT,
+                    var originalSOID = record.load({
+                        type: record.Type.SALES_ORDER,
+                        id: createdfrom,
                         isDynamic: true,
                     });
 
-                    var fulfillmentID = objFulfillment.save({
-                        enableSourcing: true,
-                        ignoreMandatoryFields: true
-                    });
+                    if (!checkForBackorder(originalSOID, context.form)) {
 
-                    var objCashSale = record.transform({
-                        fromType: record.Type.SALES_ORDER,
-                        fromId: createdfrom,
-                        toType: record.Type.CASH_SALE,
-                        isDynamic: true,
-                    });
+                        var objFulfillment = record.transform({
+                            fromType: record.Type.SALES_ORDER,
+                            fromId: createdfrom,
+                            toType: record.Type.ITEM_FULFILLMENT,
+                            isDynamic: true,
+                        });
 
-                    var cashSaleID = objCashSale.save({
-                        enableSourcing: true,
-                        ignoreMandatoryFields: true
-                    });
+                        var fulfillmentID = objFulfillment.save({
+                            enableSourcing: true,
+                            ignoreMandatoryFields: true
+                        });
 
-                    //https://1204410.app.netsuite.com/app/accounting/print/hotprint.nl?regular=T&sethotprinter=T&formnumber=136&trantype=cashsale&&id=49986&label=Cash+Sale&printtype=transaction
+                        var objCashSale = record.transform({
+                            fromType: record.Type.SALES_ORDER,
+                            fromId: createdfrom,
+                            toType: record.Type.CASH_SALE,
+                            isDynamic: true,
+                        });
 
-                    var printURL = 'https://1204410.app.netsuite.com/app/accounting/print/hotprint.nl?regular=T&sethotprinter=T&formnumber=136&trantype=cashsale&&id=' + cashSaleID + "&label=Cash+Sale&printtype=transaction";
+                        var cashSaleID = objCashSale.save({
+                            enableSourcing: true,
+                            ignoreMandatoryFields: true
+                        });
 
-                      var redirect_value = '<html><body><script language="javascript">window.open("' + printURL +'", "mywindow","location=1,status=1,scrollbars=1, resizable=1, directories=1, toolbar=1, titlebar=1");</script></body></html>';
+                        //https://1204410.app.netsuite.com/app/accounting/print/hotprint.nl?regular=T&sethotprinter=T&formnumber=136&trantype=cashsale&&id=49986&label=Cash+Sale&printtype=transaction
 
-                      var field = context.form.addField({
-                          id : 'custpage_redirect',
-                          type : serverWidget.FieldType.INLINEHTML,
-                          label : 'Redirect'
-                      });
-              
-              
-                      field.defaultValue = redirect_value;
+                        var printURL = 'https://1204410.app.netsuite.com/app/accounting/print/hotprint.nl?regular=T&sethotprinter=T&formnumber=136&trantype=cashsale&&id=' + cashSaleID + "&label=Cash+Sale&printtype=transaction";
 
-                      var cashSaleURL = 'https://1204410.app.netsuite.com/app/accounting/transactions/cashsale.nl?id='+ cashSaleID +'&whence=' ;
+                        var redirect_value = '<html><body><script language="javascript">window.open("' + printURL + '", "mywindow","location=1,status=1,scrollbars=1, resizable=1, directories=1, toolbar=1, titlebar=1");</script></body></html>';
 
-                      var redirect2_value = '<html><body><script language="javascript">window.location.replace("'+ cashSaleURL +'");</script></body></html>';
+                        var field = context.form.addField({
+                            id: 'custpage_redirect',
+                            type: serverWidget.FieldType.INLINEHTML,
+                            label: 'Redirect'
+                        });
 
-                      var field2 = context.form.addField({
-                          id : 'custpage_redirect2',
-                          type : serverWidget.FieldType.INLINEHTML,
-                          label : 'Redirect2'
-                      });
-              
-              
-                      field2.defaultValue = redirect2_value;
-                      
-                    //redirect.toRecord({
-                    //    type: record.Type.CASH_SALE,
-                    //    id: cashSaleID
-                    //});
 
+                        field.defaultValue = redirect_value;
+
+                        var cashSaleURL = 'https://1204410.app.netsuite.com/app/accounting/transactions/cashsale.nl?id=' + cashSaleID + '&whence=';
+
+                        var redirect2_value = '<html><body><script language="javascript">window.location.replace("' + cashSaleURL + '");</script></body></html>';
+
+                        var field2 = context.form.addField({
+                            id: 'custpage_redirect2',
+                            type: serverWidget.FieldType.INLINEHTML,
+                            label: 'Redirect2'
+                        });
+
+
+                        field2.defaultValue = redirect2_value;
+
+                        //redirect.toRecord({
+                        //    type: record.Type.CASH_SALE,
+                        //    id: cashSaleID
+                        //});
+
+                    }
                 }
 
             }
@@ -89,13 +95,8 @@ define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
             beforeLoad: beforeLoad
         }
 
-        function checkForBackorder(salesOrder,Form) {
-
-            var originalSO = record.load({
-                type: record.Type.SALES_ORDER, 
-                id: salesOrder,
-                isDynamic: true,
-            });
+        function checkForBackorder(originalSO, Form) {
+            
 
             var numLines = originalSO.getLineCount({
                 sublistId: 'item'
@@ -109,17 +110,17 @@ define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
                     line: i
                 });
 
-                if (sublistFieldValue > 0 ){
+                if (sublistFieldValue > 0) {
 
                     var alert_value = "<html><body><script type='text/javascript'>window.alert('Items Backordered!!!')</script></body></html>";
 
                     var field = Form.addField({
-                        id : 'custpage_alertfield',
-                        type : serverWidget.FieldType.INLINEHTML,
-                        label : 'Warning'
+                        id: 'custpage_alertfield',
+                        type: serverWidget.FieldType.INLINEHTML,
+                        label: 'Warning'
                     });
-            
-            
+
+
                     field.defaultValue = alert_value;
 
                     return true;

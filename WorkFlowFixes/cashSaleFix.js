@@ -3,7 +3,7 @@
  *@NScriptType ClientScript
  */
 
-// version 1.0
+// version 1.1
 // release codename: Fuck the defualts 
 
 //define modules
@@ -60,14 +60,19 @@ define(['N/currentRecord', 'N/ui/dialog'],
                 };
 
                 var button6 = {
-                    label: 'Cancel',
+                    label: 'Check',
                     value: 6
+                };
+
+                var button7 = {
+                    label: 'Cancel',
+                    value: 7
                 };
 
                 var options = {
                     title: "Oh shit",
                     message: "How are dem guys payin?",
-                    buttons: [button1, button2, button3, button4, button5, button6]
+                    buttons: [button1, button2, button3, button4, button5, button6, button7]
                 };
 
                 function success(result) {
@@ -94,7 +99,7 @@ define(['N/currentRecord', 'N/ui/dialog'],
                             value: "CASH",
                             ignoreFieldChange: true,
                             forceSyncSourcing: true
-                        }); 
+                        });
 
                         selected = true;
 
@@ -121,7 +126,7 @@ define(['N/currentRecord', 'N/ui/dialog'],
                             value: "VISA",
                             ignoreFieldChange: true,
                             forceSyncSourcing: true
-                        }); 
+                        });
 
                         selected = true;
 
@@ -148,7 +153,7 @@ define(['N/currentRecord', 'N/ui/dialog'],
                             value: "M/C",
                             ignoreFieldChange: true,
                             forceSyncSourcing: true
-                        }); 
+                        });
 
                         selected = true;
 
@@ -169,20 +174,20 @@ define(['N/currentRecord', 'N/ui/dialog'],
                             ignoreFieldChange: true,
                             forceSyncSourcing: true
                         });
-    
+
                         record.setValue({
                             fieldId: 'custbody3',
                             value: "DISCOVER",
                             ignoreFieldChange: true,
                             forceSyncSourcing: true
-                        }); 
-    
+                        });
+
                         selected = true;
-    
+
                     }
-    
+
                     else if (result == 5) {
-    
+
                         record.setValue({
                             fieldId: 'paymentmethod',
                             value: 1,
@@ -196,22 +201,66 @@ define(['N/currentRecord', 'N/ui/dialog'],
                             ignoreFieldChange: true,
                             forceSyncSourcing: true
                         });
-    
+
                         record.setValue({
                             fieldId: 'custbody3',
                             value: "AM/EX",
                             ignoreFieldChange: true,
                             forceSyncSourcing: true
-                        }); 
-    
+                        });
+
                         selected = true;
-    
+
                     }
 
-                    else if (result == 6) { 
-    
+                    else if (result == 6) {
+
+                        record.setValue({
+                            fieldId: 'paymentmethod',
+                            value: 1,
+                            ignoreFieldChange: true,
+                            forceSyncSourcing: true
+                        });
+
+                        record.setValue({
+                            fieldId: 'terms',
+                            value: "",
+                            ignoreFieldChange: true,
+                            forceSyncSourcing: true
+                        });
+
+                        record.setValue({
+                            fieldId: 'custbody3',
+                            value: "CHECK",
+                            ignoreFieldChange: true,
+                            forceSyncSourcing: true
+                        });
+
+                        var checkNum = record.getValue({
+                            fieldId: 'otherrefnum'           // defines the customer entity
+                        });
+
+                        if (!checkNum || checkNum == "") {
+                            
+                            checkNum = window.prompt("Enter check number", "");
+
+                            record.setValue({
+                                fieldId: 'otherrefnum',
+                                value: checkNum,
+                                ignoreFieldChange: true,
+                                forceSyncSourcing: true
+                            });
+
+                        }
+
                         selected = true;
-    
+
+                    }
+
+                    else if (result == 7) {
+
+                        selected = true;
+
                     }
 
                     else {
@@ -220,7 +269,7 @@ define(['N/currentRecord', 'N/ui/dialog'],
 
                     }
                 }
-                
+
                 function failure(reason) {
                     console.log("Failure: " + reason);
                 }
