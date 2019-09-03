@@ -19,15 +19,11 @@ define(['N/currentRecord', 'N/ui/dialog'],
 
             var record = currentRecord.get();
 
-            customerEntity = record.getValue({
-                fieldId: 'entity'           // defines the customer entity
-            });
-
-            paymentMethod = record.getValue({
+            var paymentMethod = record.getValue({
                 fieldId: 'paymentmethod'           // defines the customer entity
             });
 
-            terms = record.getValue({
+            var terms = record.getValue({
                 fieldId: 'terms'           // defines the customer entity
             });
 
@@ -102,7 +98,7 @@ define(['N/currentRecord', 'N/ui/dialog'],
                         });
 
                         selected = true;
-
+                        
                     }
 
                     else if (result == 2) {

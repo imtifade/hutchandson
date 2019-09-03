@@ -20,13 +20,17 @@ define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
                         fieldId: 'createdfrom'
                     });
 
-                    var originalSOID = record.load({
+                    var originalSO = record.load({
                         type: record.Type.SALES_ORDER,
                         id: createdfrom,
                         isDynamic: true,
                     });
 
-                    if (!checkForBackorder(originalSOID, context.form)) {
+                    terms = originalSO.getValue({
+                        fieldId: 'terms'           // defines the customer entity
+                    });
+
+                    if (!terms || terms == 4) {
 
                         var objFulfillment = record.transform({
                             fromType: record.Type.SALES_ORDER,
@@ -80,12 +84,55 @@ define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
 
                         field2.defaultValue = redirect2_value;
 
-                        //redirect.toRecord({
-                        //    type: record.Type.CASH_SALE,
-                        //    id: cashSaleID
-                        //});
+                    }
+
+                    else {
+
+                        var objFulfillment = record.transform({
+                            fromType: record.Type.SALES_ORDER,
+                            fromId: createdfrom,
+                            toType: record.Type.ITEM_FULFILLMENT,
+                            isDynamic: true,
+                        });
+
+                        var fulfillmentID = objFulfillment.save({
+                            enableSourcing: true,
+                            ignoreMandatoryFields: true
+                        });
+
+                        var objInvoice = record.transform({
+                            fromType: record.Type.SALES_ORDER,
+                            fromId: createdfrom,
+                            toType: record.Type.INVOICE,
+                            isDynamic: true,
+                        });
+
+                        var InvoiceID = objInvoice.save({
+                            enableSourcing: true,
+                            ignoreMandatoryFields: true
+                        });
+
+                        var cashSaleURL = 'https://1204410.app.netsuite.com/app/accounting/transactions/custinvc.nl?id=' + InvoiceID + '&e=T&whence=';
+
+                        var redirect_value = '<html><body><script language="javascript">window.location.replace("' + cashSaleURL + '");</script></body></html>';
+
+                        var field = context.form.addField({
+                            id: 'custpage_redirect',
+                            type: serverWidget.FieldType.INLINEHTML,
+                            label: 'Redirect'
+                        });
+
+
+                        field.defaultValue = redirect_value;
 
                     }
+
+                    //redirect.toRecord({
+                    //    type: record.Type.CASH_SALE,
+                    //    id: cashSaleID
+                    //});
+
+
                 }
 
             }
@@ -93,41 +140,6 @@ define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
 
         return {
             beforeLoad: beforeLoad
-        }
-
-        function checkForBackorder(originalSO, Form) {
-            
-
-            var numLines = originalSO.getLineCount({
-                sublistId: 'item'
-            });
-
-            for (var i = 0; i < numLines; i++) {
-
-                var sublistFieldValue = originalSO.getSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'quantitybackordered',
-                    line: i
-                });
-
-                if (sublistFieldValue > 0) {
-
-                    var alert_value = "<html><body><script type='text/javascript'>window.alert('Items Backordered!!!')</script></body></html>";
-
-                    var field = Form.addField({
-                        id: 'custpage_alertfield',
-                        type: serverWidget.FieldType.INLINEHTML,
-                        label: 'Warning'
-                    });
-
-
-                    field.defaultValue = alert_value;
-
-                    return true;
-                }
-
-            }
-            return false;
         }
 
     });
