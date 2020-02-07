@@ -15,7 +15,7 @@ define(['N/ui/dialog', 'N/record', 'N/currentRecord'],
 
             var options = {
                 title: "Super Delete",
-                message: "Deleteing all generated documents and returning to sales order."
+                message: "Deleting all generated documents and returning to sales order."
             };
             function success(result) {
 

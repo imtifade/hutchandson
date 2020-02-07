@@ -32,8 +32,7 @@ define(['N/currentRecord', 'N/ui/message'],
                 }
 
                 if (tranID){
-                    //if the record isn't new 
-                    //
+                    //if the record isn't new do the thing
                 }
 
                 

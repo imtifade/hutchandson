@@ -90,7 +90,7 @@ define(['N/ui/dialog', 'N/currentRecord'],
                 record.setValue({
                     fieldId: 'custbodysigdata',
                     value: imgData,
-                    ignoreFieldChange: true,
+                    ignoreFieldChange: false,
                     forceSyncSourcing: true
                 });
 

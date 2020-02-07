@@ -98,7 +98,9 @@ define(['N/currentRecord', 'N/ui/dialog'],
                         });
 
                         selected = true;
-                        
+
+                        getNLMultiButtonByName('multibutton_submitter').onDropDownClick(this, event);
+
                     }
 
                     else if (result == 2) {

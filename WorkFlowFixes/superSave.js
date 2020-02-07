@@ -38,6 +38,13 @@ define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
                             toType: record.Type.ITEM_FULFILLMENT,
                             isDynamic: true,
                         });
+                      
+                        objFulfillment.setValue({
+                            fieldId: 'shipstatus',
+                            value: "C",
+                            ignoreFieldChange: true,
+                            forceSyncSourcing: true
+                        });
 
                         var fulfillmentID = objFulfillment.save({
                             enableSourcing: true,
@@ -93,6 +100,13 @@ define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
                             fromId: createdfrom,
                             toType: record.Type.ITEM_FULFILLMENT,
                             isDynamic: true,
+                        });
+                      
+                      objFulfillment.setValue({
+                            fieldId: 'shipstatus',
+                            value: "C",
+                            ignoreFieldChange: true,
+                            forceSyncSourcing: true
                         });
 
                         var fulfillmentID = objFulfillment.save({

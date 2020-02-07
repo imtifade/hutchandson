@@ -2,8 +2,8 @@
  *@NApiVersion 2.x
  *@NScriptType UserEventScript
  */
-define(['N/runtime', 'N/sftp', 'N/record', 'N/search', 'N/file'],
-    function (runtime, sftp, record, search, file) {
+define(['N/sftp', 'N/record', 'N/redirect', 'N/search', 'N/file'],
+    function (sftp, record, redirect, search, file) {
         function beforeLoad(context) {
 
             if (context.type == 'create') {
@@ -19,6 +19,11 @@ define(['N/runtime', 'N/sftp', 'N/record', 'N/search', 'N/file'],
 
                     var createdFrom = context.newRecord.getValue({
                         fieldId: 'createdfrom'
+                    });
+
+                    log.debug({
+                        title: "Doing this salesorder :",
+                        details: createdFrom
                     });
 
                     var csvLineData = getLine(csvFile, getCreatedFromTranID(createdFrom));
@@ -38,9 +43,29 @@ define(['N/runtime', 'N/sftp', 'N/record', 'N/search', 'N/file'],
 
                     if (csvLineData) {
 
-                        var curRecord = context.newRecord;
+                        var createdFrom = context.newRecord.getValue({
+                            fieldId: 'createdfrom'
+                        });
 
-                        fillForm(curRecord, csvLineData);
+                        var objFulfillment = record.transform({
+                            fromType: record.Type.SALES_ORDER,
+                            fromId: createdFrom,
+                            toType: record.Type.INVOICE,
+                            isDynamic: true,
+                        });
+
+                        fillForm(objFulfillment, csvLineData);
+
+                        var fulfillmentID = objFulfillment.save({
+                            enableSourcing: true,
+                            ignoreMandatoryFields: true
+                        });
+
+                        redirect.toRecord({
+                            type: record.Type.INVOICE,
+                            id: fulfillmentID,
+                            isEditMode: true
+                        });
                     }
 
                     else {
@@ -76,21 +101,21 @@ define(['N/runtime', 'N/sftp', 'N/record', 'N/search', 'N/file'],
                 }],
             }).run().getRange({ start: 0, end: 1 });
 
-            if (currentCSVSearch[0]){
+            if (currentCSVSearch[0]) {
 
-            //Name of the current CSV in the cabinet
-            var currentCSVName = currentCSVSearch[0].getValue({
-                name: 'name'
-            })
+                //Name of the current CSV in the cabinet
+                var currentCSVName = currentCSVSearch[0].getValue({
+                    name: 'name'
+                })
 
-            var currentCSVID = currentCSVSearch[0].id;
+                var currentCSVID = currentCSVSearch[0].id;
 
-            log.debug({
-                title: "File we are looking for.",
-                details: currentCSVName + ' ' + currentCSVID
-            });
+                log.debug({
+                    title: "File we are looking for.",
+                    details: currentCSVName + ' ' + currentCSVID
+                });
 
-        }
+            }
 
             //if the file in cabinate isn't the newest one grab it from the SFTP
             if (currentCSVName != CSVNameDate || force || !currentCSVSearch[0]) {
@@ -138,11 +163,11 @@ define(['N/runtime', 'N/sftp', 'N/record', 'N/search', 'N/file'],
                     isOnline: true
                 });
 
-                if (currentCSVSearch[0]){
-                file.delete({
-                    id: currentCSVID
-                });
-            }
+                if (currentCSVSearch[0]) {
+                    file.delete({
+                        id: currentCSVID
+                    });
+                }
 
                 var csvID = csvFile.save();
             }
@@ -166,52 +191,98 @@ define(['N/runtime', 'N/sftp', 'N/record', 'N/search', 'N/file'],
 
             var curRecord = CSVData;
 
-            var numLines = curRecord.getLineCount({
-                sublistId: 'item'
-            });
-
             curRecord.setValue({
                 fieldId: 'trackingnumbers',
                 value: csvCurLineData[1],
                 ignoreFieldChange: true
             });
 
-            if (csvCurLineData[2] != 0){
-
-            curRecord.insertLine({
-                sublistId: 'item',
-                line: numLines,
+            log.debug({
+                title: "Shipping charges:",
+                details: csvCurLineData[2]
             });
 
-            curRecord.setSublistValue({
-                sublistId: 'item',
-                fieldId: 'item',
-                line: numLines,
-                value: 37640
-            });
+            if (csvCurLineData[2] != 0) {
 
-            curRecord.setSublistValue({
-                sublistId: 'item',
-                fieldId: 'quantity',
-                line: numLines,
-                value: 1
-            });
 
-            curRecord.setSublistValue({
-                sublistId: 'item',
-                fieldId: 'rate',
-                line: numLines,
-                value: csvCurLineData[2]
-            });
 
-            curRecord.setSublistValue({
-                sublistId: 'item',
-                fieldId: 'description',
-                line: numLines,
-                value: "SHIPPING CHARGES"
-            });
+                curRecord.selectNewLine({
+                    sublistId: 'item'
+                });
 
-        }
+                /* curRecord.insertLine({
+                    sublistId: 'item',
+                    line: numLines,
+                }); */
+
+                curRecord.setCurrentSublistValue({
+                    sublistId: 'item',
+                    fieldId: 'item',
+                    value: 37640,
+                    ignoreFieldChange: true
+                });
+
+                /* curRecord.setSublistValue({
+                    sublistId: 'item',
+                    fieldId: 'item',
+                    line: numLines,
+                    value: 37640
+                }); */
+
+                curRecord.setCurrentSublistValue({
+                    sublistId: 'item',
+                    fieldId: 'quantity',
+                    value: 1,
+                    ignoreFieldChange: true
+                });
+
+                /* curRecord.setSublistValue({
+                    sublistId: 'item',
+                    fieldId: 'quantity',
+                    line: numLines,
+                    value: 1
+                }); */
+
+                curRecord.setCurrentSublistValue({
+                    sublistId: 'item',
+                    fieldId: 'rate',
+                    value: csvCurLineData[2],
+                    ignoreFieldChange: true
+                });
+
+                curRecord.setCurrentSublistValue({
+                    sublistId: 'item',
+                    fieldId: 'amount',
+                    value: csvCurLineData[2],
+                    ignoreFieldChange: true
+                });
+
+                curRecord.setCurrentSublistValue({
+                    sublistId: 'item',
+                    fieldId: 'description',
+                    value: "SHIPPING CHARGES",
+                    ignoreFieldChange: true
+                });
+
+                curRecord.commitLine({
+                    sublistId: 'item'
+                });
+
+                /* curRecord.setSublistValue({
+                    sublistId: 'item',
+                    fieldId: 'rate',
+                    line: numLines,
+                    value: csvCurLineData[2]
+                }); */
+
+               /*  curRecord.setSublistValue({
+                    sublistId: 'item',
+                    fieldId: 'description',
+                    line: numLines,
+                    value: "SHIPPING CHARGES"
+                });
+ */
+            }
 
 
         }

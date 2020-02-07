@@ -14,22 +14,53 @@ define(['N/currentRecord', 'N/ui/dialog'],
 
         var selected = false;
 
+        function pageInit(context) {
+
+            var record = currentRecord.get();
+
+            var transID = record.getValue({
+                fieldId: 'id'
+            })
+
+            if (!transID){
+                record.selectLine({
+                    sublistId: 'locations',
+                    line: 0
+                });
+
+                record.setCurrentSublistValue({
+                    sublistId: 'locations',
+                    fieldId: 'preferredstocklevel',
+                    value: 0,
+                    ignoreFieldChange: true
+                });
+
+                record.setCurrentSublistValue({
+                    sublistId: 'locations',
+                    fieldId: 'reorderpoint',
+                    value: 0,
+                    ignoreFieldChange: true
+                });
+
+                record.commitLine({
+                    sublistId: 'locations'
+                });
+            }
+
+        }
+
         function itemEntryCheck(context) {
 
 
             var record = currentRecord.get();
 
-            unitType = record.getValue({
-                fieldId: 'unitstype'           // defines the customer entity
-            });
+            /*var quantity = record.getSublistValue({
+                sublistId: 'item',
+                fieldId: 'quantity',
+                line: 0
+            });*/
 
-            prefLocal = record.getValue({
-                fieldId: 'preferredlocation'           // defines the perfered location
-            });
-
-
-
-            if (!prefLocal || !unitType && !selected) {
+            if (!hasAPerferedVender (record) && !selected) {
 
                 var button1 = {
                     label: 'Fixing it',
@@ -42,7 +73,7 @@ define(['N/currentRecord', 'N/ui/dialog'],
 
                 var options = {
                     title: "Oh shit",
-                    message: "Looks like units and/or perfered Location is not set!",
+                    message: "Looks like there is no perfered vender!!!",
                     buttons: [button1, button2]
                 };
 
@@ -80,8 +111,33 @@ define(['N/currentRecord', 'N/ui/dialog'],
         }
 
         return {
-            saveRecord: itemEntryCheck
+            saveRecord: itemEntryCheck,
+            pageInit: pageInit
 
         };
+
+        function hasAPerferedVender(Record) {
+
+            var numLines = Record.getLineCount({
+                sublistId: 'itemvendor'
+            });
+
+            if (numLines != 0) {
+
+                for (var i = 0; i <= numLines - 1; i++) {
+
+                    var perferedBool = Record.getSublistValue({
+                        sublistId: 'itemvendor',
+                        fieldId: 'preferredvendor',
+                        line: i
+                    });
+
+                    if (perferedBool){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
     });
