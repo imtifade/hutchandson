@@ -43,10 +43,19 @@ define(['N/ui/dialog', 'N/currentRecord'],
         //Call back for page load
         function pageInit(context) {
 
+
             var objRecord = currentRecord.get();
+
             var imgvalue = objRecord.getValue({
                 fieldId: 'custbodysigdata'
             });
+            var superSaved = objRecord.getValue({
+                fieldId: 'custbody_supersaved'
+            });
+
+            if (superSaved) {
+                startSign();
+            }
 
             if (imgvalue.length <= 40){
         	
@@ -109,7 +118,7 @@ define(['N/ui/dialog', 'N/currentRecord'],
 
 
         }
-        //Still don't understnad this fully but it's here. Something to do with call back
+        //Call back Functions
         return {
             signatureButtonHit:signatureButtonHit,
             clearButtonHit:clearButtonHit,

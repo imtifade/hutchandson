@@ -32,65 +32,123 @@ define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
 
                     if (!terms || terms == 4) {
 
-                        var objFulfillment = record.transform({
-                            fromType: record.Type.SALES_ORDER,
-                            fromId: createdfrom,
-                            toType: record.Type.ITEM_FULFILLMENT,
-                            isDynamic: true,
-                        });
-                      
-                        objFulfillment.setValue({
-                            fieldId: 'shipstatus',
-                            value: "C",
-                            ignoreFieldChange: true,
-                            forceSyncSourcing: true
+                        var paymentType = originalSO.getValue({
+                            fieldId: 'custbody3'
                         });
 
-                        var fulfillmentID = objFulfillment.save({
-                            enableSourcing: true,
-                            ignoreMandatoryFields: true
-                        });
+                        if (paymentType == "TBD") {
 
-                        var objCashSale = record.transform({
-                            fromType: record.Type.SALES_ORDER,
-                            fromId: createdfrom,
-                            toType: record.Type.CASH_SALE,
-                            isDynamic: true,
-                        });
+                            var objFulfillment = record.transform({
+                                fromType: record.Type.SALES_ORDER,
+                                fromId: createdfrom,
+                                toType: record.Type.ITEM_FULFILLMENT,
+                                isDynamic: true,
+                            });
 
-                        var cashSaleID = objCashSale.save({
-                            enableSourcing: true,
-                            ignoreMandatoryFields: true
-                        });
+                            objFulfillment.setValue({
+                                fieldId: 'shipstatus',
+                                value: "C",
+                                ignoreFieldChange: true,
+                                forceSyncSourcing: true
+                            });
 
-                        //https://1204410.app.netsuite.com/app/accounting/print/hotprint.nl?regular=T&sethotprinter=T&formnumber=136&trantype=cashsale&&id=49986&label=Cash+Sale&printtype=transaction
+                            var fulfillmentID = objFulfillment.save({
+                                enableSourcing: true,
+                                ignoreMandatoryFields: true
+                            });
 
-                        var printURL = 'https://1204410.app.netsuite.com/app/accounting/print/hotprint.nl?regular=T&sethotprinter=T&formnumber=136&trantype=cashsale&&id=' + cashSaleID + "&label=Cash+Sale&printtype=transaction";
+                            var objCashSale = record.transform({
+                                fromType: record.Type.SALES_ORDER,
+                                fromId: createdfrom,
+                                toType: record.Type.CASH_SALE,
+                                isDynamic: true,
+                            });
 
-                        var redirect_value = '<html><body><script language="javascript">window.open("' + printURL + '", "mywindow","location=1,status=1,scrollbars=1, resizable=1, directories=1, toolbar=1, titlebar=1");</script></body></html>';
-
-                        var field = context.form.addField({
-                            id: 'custpage_redirect',
-                            type: serverWidget.FieldType.INLINEHTML,
-                            label: 'Redirect'
-                        });
-
-
-                        field.defaultValue = redirect_value;
-
-                        var cashSaleURL = 'https://1204410.app.netsuite.com/app/accounting/transactions/cashsale.nl?id=' + cashSaleID + '&whence=';
-
-                        var redirect2_value = '<html><body><script language="javascript">window.location.replace("' + cashSaleURL + '");</script></body></html>';
-
-                        var field2 = context.form.addField({
-                            id: 'custpage_redirect2',
-                            type: serverWidget.FieldType.INLINEHTML,
-                            label: 'Redirect2'
-                        });
+                            var cashSaleID = objCashSale.save({
+                                enableSourcing: true,
+                                ignoreMandatoryFields: true
+                            });
 
 
-                        field2.defaultValue = redirect2_value;
+                            var cashSaleURL = 'https://1204410.app.netsuite.com/app/accounting/transactions/cashsale.nl?id=' + cashSaleID + '&whence=&e=T';
 
+                            var redirect2_value = '<html><body><script language="javascript">window.location.replace("' + cashSaleURL + '");</script></body></html>';
+
+                            var field2 = context.form.addField({
+                                id: 'custpage_redirect2',
+                                type: serverWidget.FieldType.INLINEHTML,
+                                label: 'Redirect2'
+                            });
+
+
+                            field2.defaultValue = redirect2_value;
+                            
+
+
+                        }
+
+                        else {
+
+                            var objFulfillment = record.transform({
+                                fromType: record.Type.SALES_ORDER,
+                                fromId: createdfrom,
+                                toType: record.Type.ITEM_FULFILLMENT,
+                                isDynamic: true,
+                            });
+
+                            objFulfillment.setValue({
+                                fieldId: 'shipstatus',
+                                value: "C",
+                                ignoreFieldChange: true,
+                                forceSyncSourcing: true
+                            });
+
+                            var fulfillmentID = objFulfillment.save({
+                                enableSourcing: true,
+                                ignoreMandatoryFields: true
+                            });
+
+                            var objCashSale = record.transform({
+                                fromType: record.Type.SALES_ORDER,
+                                fromId: createdfrom,
+                                toType: record.Type.CASH_SALE,
+                                isDynamic: true,
+                            });
+
+                            var cashSaleID = objCashSale.save({
+                                enableSourcing: true,
+                                ignoreMandatoryFields: true
+                            });
+
+                            //https://1204410.app.netsuite.com/app/accounting/print/hotprint.nl?regular=T&sethotprinter=T&formnumber=136&trantype=cashsale&&id=49986&label=Cash+Sale&printtype=transaction
+
+                            var printURL = 'https://1204410.app.netsuite.com/app/accounting/print/hotprint.nl?regular=T&sethotprinter=T&formnumber=136&trantype=cashsale&&id=' + cashSaleID + "&label=Cash+Sale&printtype=transaction";
+
+                            var redirect_value = '<html><body><script language="javascript">window.open("' + printURL + '", "mywindow","location=1,status=1,scrollbars=1, resizable=1, directories=1, toolbar=1, titlebar=1");</script></body></html>';
+
+                            var field = context.form.addField({
+                                id: 'custpage_redirect',
+                                type: serverWidget.FieldType.INLINEHTML,
+                                label: 'Redirect'
+                            });
+
+
+                            field.defaultValue = redirect_value;
+
+                            var cashSaleURL = 'https://1204410.app.netsuite.com/app/accounting/transactions/cashsale.nl?id=' + cashSaleID + '&whence=';
+
+                            var redirect2_value = '<html><body><script language="javascript">window.location.replace("' + cashSaleURL + '");</script></body></html>';
+
+                            var field2 = context.form.addField({
+                                id: 'custpage_redirect2',
+                                type: serverWidget.FieldType.INLINEHTML,
+                                label: 'Redirect2'
+                            });
+
+
+                            field2.defaultValue = redirect2_value;
+
+                        }
                     }
 
                     else {
@@ -101,8 +159,8 @@ define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
                             toType: record.Type.ITEM_FULFILLMENT,
                             isDynamic: true,
                         });
-                      
-                      objFulfillment.setValue({
+
+                        objFulfillment.setValue({
                             fieldId: 'shipstatus',
                             value: "C",
                             ignoreFieldChange: true,
