@@ -2,8 +2,8 @@
  *@NApiVersion 2.x
  *@NScriptType UserEventScript
  */
-define(['N/sftp', 'N/record', 'N/redirect', 'N/search', 'N/file'],
-    function (sftp, record, redirect, search, file) {
+define(['N/sftp', 'N/record', 'N/redirect', 'N/search', 'N/file', 'N/ui/serverWidget'],
+    function (sftp, record, redirect, search, file, serverWidget) {
         function beforeLoad(context) {
 
             if (context.type == 'create') {
@@ -26,8 +26,11 @@ define(['N/sftp', 'N/record', 'N/redirect', 'N/search', 'N/file'],
                         details: createdFrom
                     });
 
-                    var csvLineData = getLine(csvFile, getCreatedFromTranID(createdFrom));
+                    if (csvFile) {
 
+                        var csvLineData = getLine(csvFile, getCreatedFromTranID(createdFrom));
+
+                    }
                     // force download if SO isn't on the current CSV
                     if (!csvLineData) {
 
@@ -38,7 +41,11 @@ define(['N/sftp', 'N/record', 'N/redirect', 'N/search', 'N/file'],
                             fieldId: 'createdfrom'
                         });
 
-                        var csvLineData = getLine(csvFile, getCreatedFromTranID(createdFrom));
+                        if (csvFile) {
+
+                            var csvLineData = getLine(csvFile, getCreatedFromTranID(createdFrom));
+    
+                        }
                     }
 
                     if (csvLineData) {
@@ -69,9 +76,35 @@ define(['N/sftp', 'N/record', 'N/redirect', 'N/search', 'N/file'],
                     }
 
                     else {
+
+                            var alertMessage = '<html><body><script language="javascript">alert("There was an error with importing tracking. You will need to put it in manually ");</script></body></html>';
+    
+                                var field = context.form.addField({
+                                    id: 'custpage_alertalert',
+                                    type: serverWidget.FieldType.INLINEHTML,
+                                    label: 'AlertAlert'
+                                });
+    
+    
+                                field.defaultValue = alertMessage;
+
                         log.error("Failed to find the information in UPS export data giving up");
                     }
 
+                }
+            }
+            //if it's not a new order hide the pop up.
+            else {
+                var alertMes = context.form.getField({
+                    id : 'custpage_alertalert'
+                });
+    
+                if (alertMes){
+    
+                    alertMes.updateDisplayType({
+                        displayType : serverWidget.FieldDisplayType.HIDDEN
+                    });
+    
                 }
             }
 
@@ -275,13 +308,13 @@ define(['N/sftp', 'N/record', 'N/redirect', 'N/search', 'N/file'],
                     value: csvCurLineData[2]
                 }); */
 
-               /*  curRecord.setSublistValue({
-                    sublistId: 'item',
-                    fieldId: 'description',
-                    line: numLines,
-                    value: "SHIPPING CHARGES"
-                });
- */
+                /*  curRecord.setSublistValue({
+                     sublistId: 'item',
+                     fieldId: 'description',
+                     line: numLines,
+                     value: "SHIPPING CHARGES"
+                 });
+  */
             }
 
 
@@ -308,6 +341,8 @@ define(['N/sftp', 'N/record', 'N/redirect', 'N/search', 'N/file'],
 
         //Returns the line of data in the CSV file that matches the transID in the parameter
         function getLine(csvFiledata, compareID) {
+
+
             var iterator = csvFiledata.lines.iterator();
 
             var dataOut = [];
