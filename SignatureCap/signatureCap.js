@@ -17,14 +17,14 @@ define(['N/ui/dialog', 'N/currentRecord'],
 
         //Callback for when the signature button is hit
         function signatureButtonHit(context) {
-            
+
             //Start the signature dialog
-        	startSign();
-        	
+            startSign();
+
         }
-        
+
         //Call back for when the clear signature button is hit(currently in the actions sub tab)
-        function clearButtonHit(context){
+        function clearButtonHit(context) {
 
             imgData = 'iVBORw0KGgoAAAANSUhEUgAAAHwAAAB8CAIAAAAkfEPpAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAERSURBVHhe7dAxAQAwEAOh+jeduvhbQAJvnJMekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6Qfm77q5OGTspOFOwAAAAASUVORK5CYII='
 
@@ -47,12 +47,12 @@ define(['N/ui/dialog', 'N/currentRecord'],
             var imgvalue = objRecord.getValue({
                 fieldId: 'custbodysigdata'
             });
-            
 
-            if (imgvalue.length <= 40){
-            
+
+            if (imgvalue.length <= 40) {
+
                 imgData = 'iVBORw0KGgoAAAANSUhEUgAAAHwAAAB8CAIAAAAkfEPpAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAERSURBVHhe7dAxAQAwEAOh+jeduvhbQAJvnJMekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6QHpAekB6Qfm77q5OGTspOFOwAAAAASUVORK5CYII='
-               
+
                 var record = currentRecord.get();
                 record.setValue({
                     fieldId: 'custbodysigdata',
@@ -64,11 +64,11 @@ define(['N/ui/dialog', 'N/currentRecord'],
                 var superSaved = objRecord.getValue({
                     fieldId: 'custbody_supersaved'
                 });
-    
+
                 if (superSaved) {
-    
+
                     startSign();
-    
+
                 }
             }
         }
@@ -81,7 +81,11 @@ define(['N/ui/dialog', 'N/currentRecord'],
             SetValues(obj, imgWidth, imgHeight);
             //Process the response
 
-            NLMultiButton_doAction('multibutton_submitter', 'saveprint');
+            var objRecord = currentRecord.get();
+
+            var imgvalue = objRecord.getValue({
+                fieldId: 'custbodysigdata'
+            });
 
         }
 
@@ -106,7 +110,22 @@ define(['N/ui/dialog', 'N/currentRecord'],
                     forceSyncSourcing: true
                 });
 
-                    
+                custName = window.prompt("Customer Name", "");
+
+                if (custName.length >= 1) {
+                    var currentMemo = record.getValue({
+                        fieldId: 'memo'
+                    });
+
+                    var newMemo =currentMemo.concat (" | Signed by: ", custName);
+                    record.setValue({
+                        fieldId: 'memo',
+                        value: newMemo,
+                        ignoreFieldChange: false,
+                        forceSyncSourcing: false
+                    });
+                }
+
             }
             //If not signed call them a dumbass
             else {
@@ -123,10 +142,10 @@ define(['N/ui/dialog', 'N/currentRecord'],
         }
         //Call back Functions
         return {
-            signatureButtonHit:signatureButtonHit,
-            clearButtonHit:clearButtonHit,
-        	pageInit:pageInit
-        	
+            signatureButtonHit: signatureButtonHit,
+            clearButtonHit: clearButtonHit,
+            pageInit: pageInit
+
         };
 
         //Some functions
@@ -154,5 +173,5 @@ define(['N/ui/dialog', 'N/currentRecord'],
             element.dispatchEvent(evt);
         }
 
-        
+
     });
