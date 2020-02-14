@@ -3,28 +3,34 @@
  *@NScriptType ClientScript
  */
 
+ /*Todo:
+ Move the dialog pop up to a function 
+ Further optimizing
+ 
+ */
+
 //Release Codename: fuck the flow
 define(['N/currentRecord', 'N/ui/message', 'N/ui/dialog'],
     function (currentRecord, message, dialog) {
         function superSave(context) {
-
+            //grab the current record
             var curRecord = currentRecord.get();
-
+            //check for backorders if no then this 
             if (!checkForBackorder(curRecord)) {
-
+                //set the super save status
                 curRecord.setValue({
                     fieldId: 'custbody_supersaved',
                     value: true,
                     ignoreFieldChange: true,
                     forceSyncSourcing: true
                 });
-
+                //grab the internatl ID
                 var tranID = curRecord.getValue({
                     fieldId: 'tranid'           // defines the customer entity
                 });
-
+                //if it's to be generated (bran new)
                 if (tranID == "To Be Generated") {
-
+                    //check billing and show dialog
                     billingCheck(context, tranID);
 
                 }
@@ -41,17 +47,18 @@ define(['N/currentRecord', 'N/ui/message', 'N/ui/dialog'],
 
 
             }
+            //if there is a back order
             else {
-
+                //saw a waring at the top of the page
                 var backOrderError = message.create({
                     title: "Whoa There Buddy",
                     message: "You have a back ordered item. Fix dat.",
                     type: message.Type.ERROR,
-                    duration: 5000
+                    duration: 5000 //duration of message in mSec
                 });
 
 
-                backOrderError.show(); // will stay up until hide is called.
+                backOrderError.show(); //show the message
 
             }
 
@@ -75,6 +82,8 @@ define(['N/currentRecord', 'N/ui/message', 'N/ui/dialog'],
             superSave: superSave
         }
 
+        //there is too much to this.....
+        //This takes the context and internal id as perameters and asks the user to choose a payment type then saves the record after payment type is chosen
         function billingCheck(context, tranid) {
 
 
@@ -330,31 +339,18 @@ define(['N/currentRecord', 'N/ui/message', 'N/ui/dialog'],
 
                         //do this if it a pre exsisting sales order
 
-                        http.request.promise({
-                            method: http.Method.GET, //Get should be OK
-                            url: 'http://www.google.com', //Replace with the Suitelet URL
-                            body: 'My REQUEST Data', //Replace with the tranID
-                            headers: headerObj // Probably don't need this
-                        })
-                            .then(function (response) {
-                                log.debug({
-                                    title: 'Response',
-                                    details: response
-                                });
-                            })
-                            .catch(function onRejected(reason) {
-                                log.debug({
-                                    title: 'Invalid Request: ',
-                                    details: reason
-                                });
-                            })
-
+                        //hack to make is save after a button is hit
+                        //a command called to a seperate javascript file on the page
+                        //submitter is just like hitting normal save
                         NLMultiButton_doAction('multibutton_submitter', 'submitter');
 
                     }
 
                     else if (result != 7) {
 
+                        //hack to make is save after a button is hit
+                        //a command called to a seperate javascript file on the page
+                        //submitfulfill is just like hitting save and fulfill
                         NLMultiButton_doAction('multibutton_submitter', 'submitfulfill');
 
                     }
@@ -375,7 +371,9 @@ define(['N/currentRecord', 'N/ui/message', 'N/ui/dialog'],
 
                 }
 
-            } else {
+            } 
+            //else just save and fulfill. This only should happen on net30s
+            else {
 
                 if (tranid == "To Be Generated"){
 
@@ -388,7 +386,7 @@ define(['N/currentRecord', 'N/ui/message', 'N/ui/dialog'],
 
         }
 
-
+        //checks for back orders and returns true is there is one false if not
         function checkForBackorder(originalSO) {
 
 

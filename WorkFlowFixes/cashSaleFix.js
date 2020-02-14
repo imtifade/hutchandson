@@ -16,33 +16,30 @@ define(['N/currentRecord', 'N/ui/dialog'],
     //Callback for modules
     function (currentRecord, dialog) {
 
-
+        //this for the work around that keep the whole server from crashing. May or may not be needed anymore. Still don't touch it!
         var selected = false;
-
+        //call by function from record save 
         function billingCheck(context) {
-
-
+            //grab the current record
             var record = currentRecord.get();
-
-
+            //grab super save status
             var superSaved = record.getValue({
                 fieldId: 'custbody_supersaved'
             });
-
+            //if it wasn't super saved alreadt
             if (!superSaved) {
-
+                //grab payment method
                 var paymentMethod = record.getValue({
-                    fieldId: 'paymentmethod'           // defines the customer entity
+                    fieldId: 'paymentmethod'
                 });
-
+                //grab payment terms
                 var terms = record.getValue({
-                    fieldId: 'terms'           // defines the customer entity
+                    fieldId: 'terms'
                 });
 
-
-
+                //if terms are due on reciept or terms are blank and the payment meathod isn't cash
                 if (terms == 4 && !selected || !terms && paymentMethod != 1 && !selected) {
-
+                    //setting up the buttons
                     var button1 = {
                         label: 'Cash',
                         value: 1
@@ -81,16 +78,16 @@ define(['N/currentRecord', 'N/ui/dialog'],
                         label: 'Cancel',
                         value: 8
                     };
-
+                    //combine everthing for the options for the dialog pop up
                     var options = {
                         title: "Oh shit",
                         message: "How are dem guys payin?",
                         buttons: [button1, button2, button3, button4, button5, button6, button7, cancle]
                     };
-
+                    //do this when a dialog button is hit
                     function success(result) {
                         console.log("Success with value " + result);
-
+                        //look for each buttons result and set the record correctly accordingly
                         if (result == 1) {
 
                             record.setValue({
@@ -270,8 +267,8 @@ define(['N/currentRecord', 'N/ui/dialog'],
                             selected = true;
 
                         }
-
-                        else if (result == 7) { //change this
+                        //TBD option
+                        else if (result == 7) {
 
                             record.setValue({
                                 fieldId: 'paymentmethod',
@@ -304,7 +301,7 @@ define(['N/currentRecord', 'N/ui/dialog'],
                             selected = true;
 
                         }
-
+                        //if cancel is hit stop
                         else if (result == 8) {
 
                             selected = false;
@@ -312,7 +309,8 @@ define(['N/currentRecord', 'N/ui/dialog'],
                         }
 
                         if (result != 8) {
-
+                            //hack to make is save after a button is hit
+                            //a command called to a seperate javascript file on the page
                             NLMultiButton_doAction('multibutton_submitter', 'submitter');
 
                         }
