@@ -95,7 +95,7 @@ define(['N/runtime', 'N/sftp', 'N/search', 'N/file'],
                         filename: 'downloadMe.js'
                     });*/
                 });
-
+                //create the file
                 var myFileToUpload = file.create({
                     name: 'upsData.csv',
                     fileType: file.Type.PLAINTEXT,
@@ -125,8 +125,6 @@ define(['N/runtime', 'N/sftp', 'N/search', 'N/file'],
     });
 
 function addTextQualifier(str, qualifier) {
-    var escapedQualifier = qualifier + qualifier;
-    //str = str.replaceAll(qualifier, escapedQualifier);
     str = qualifier + str + qualifier;
     return str;
 }

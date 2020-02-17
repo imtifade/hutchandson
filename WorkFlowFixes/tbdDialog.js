@@ -19,6 +19,9 @@ define(['N/record', 'N/currentRecord', 'N/ui/dialog'],
 
         function pageInit(context) {
 
+            //catches  the payment meathod on page load and brings up the
+            //payment method dialog
+
             var curRecord = currentRecord.get();
 
             var paymentMethod = curRecord.getValue({

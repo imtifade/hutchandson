@@ -9,7 +9,6 @@ define(['N/runtime', 'N/sftp', 'N/search', 'N/file', "N/ui/serverWidget"],
 
 
             try {
-                // FTP Parameters
 
                 var scriptObj = runtime.getCurrentScript();
 
@@ -20,7 +19,7 @@ define(['N/runtime', 'N/sftp', 'N/search', 'N/file', "N/ui/serverWidget"],
                 log.debug('Error loading FTP Parameters from Script');
                 return false;
             }
-
+            //generated from the SFTP_TOOL Script
             var myPwdGuid = "8def586bf5654b31bc4e1d5d5be8cb66";
             var myHostKey = "AAAAB3NzaC1yc2EAAAADAQABAAABgQDWergycmQOXBIpX69KCOsjzFTON9ZC5LqYKf5lDEUzuASNFtpiHNzBr8bk10pduxrn9TLj9GNFJMvuNzs/XeJYAxrFw3pqaaFrUutNHN9Yd3pweQiL0WecgICiwH+zLnzwxKhlShJsiwRu8KSpk1j7Ipo7R0Ac1NlqeM2fJ/20EZyIGSr3xPVrV5B86bXIVBcG7kL+24jEuMkgmqUk5fxqFNYvmf/2jE10pchJN5uLJxsIAT0yTIPqXcxDtBlM+0jPYa9e32NMiL2WmvmBGL/gBDJmOknzQcDCZVi1INK9clUu5lppBRnNpquHjlXnjkdoLjpmVOJKIuwRAqKcZWh2cBrsZrRr4XaX85bpNsQJ6n9ItG9WNqDiZhK8FNkBLIYxkttW/WXRnTM4V31m56TKHJQc0cnVE0ZC4Qja3Kir1mofezVPRtCHP8WGgnIv2zhqtc6LNHkinbmusfLAbJGo4jirvAroRfifCF5NqKEwGxaTmR/qQaUVYEFQ1xJnK1s=";
 
@@ -34,7 +33,7 @@ define(['N/runtime', 'N/sftp', 'N/search', 'N/file', "N/ui/serverWidget"],
                 hostKey: myHostKey
             });
 
-            // specify the file to upload using the N/file module
+            // create file variables to upload using the N/file module
 
             var csvFile = '';
             var resultsArray = [[]];
@@ -53,7 +52,7 @@ define(['N/runtime', 'N/sftp', 'N/search', 'N/file', "N/ui/serverWidget"],
                 columnHeadingsArray.push(addTextQualifier(col.label, textQualifier));
                 colummNamesArray.push(col.name); // Array of column names
             });
-
+            //format to match CSV 
             for (var i = 0; i < columnHeadingsArray.length; i++ ) {
                 columnHeadingsArray[i] = columnHeadingsArray[i].replace(/ /g,"_");
             }
@@ -63,7 +62,7 @@ define(['N/runtime', 'N/sftp', 'N/search', 'N/file', "N/ui/serverWidget"],
             columnHeadingsArray[7] = "State";
 
 
-
+            //add headings to CSV variable
             resultsArray[0] = columnHeadingsArray;
             csvFile += columnHeadingsArray.join(fieldSeperator) + '\n';
 
@@ -81,7 +80,7 @@ define(['N/runtime', 'N/sftp', 'N/search', 'N/file', "N/ui/serverWidget"],
                     resultsArray.push(rowDataArray);
                     csvFile += rowDataArray.join(fieldSeperator) + '\n';
                 });
-
+                //create the file
                 var myFileToUpload = file.create({
                     name: 'upsData.csv',
                     fileType: file.Type.PLAINTEXT,
@@ -111,10 +110,8 @@ define(['N/runtime', 'N/sftp', 'N/search', 'N/file', "N/ui/serverWidget"],
             onRequest: UPSsave
         }
     });
-
+//function to put qualifier on both sides of the input string
 function addTextQualifier(str, qualifier) {
-    var escapedQualifier = qualifier + qualifier;
-    //str = str.replaceAll(qualifier, escapedQualifier);
     str = qualifier + str + qualifier;
     return str;
 }

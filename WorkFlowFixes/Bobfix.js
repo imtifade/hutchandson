@@ -88,13 +88,13 @@ define(['N/currentRecord', 'N/ui/dialog'],
                     line: i
                 });
 
-                var rate = originalSO.getSublistValue({
+                var amount = originalSO.getSublistValue({
                     sublistId: 'item',
-                    fieldId: 'rate',
+                    fieldId: 'amount',
                     line: i
                 });
 
-                if (rate < cost) {
+                if (amount < cost) {
 
                     var lineitem = originalSO.getSublistValue({
                         sublistId: 'item',
