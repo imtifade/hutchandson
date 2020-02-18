@@ -152,7 +152,7 @@ define(['N/record', 'N/currentRecord', 'N/ui/dialog'],
         };
 
         var button4 = {
-            label: 'Discover',
+            label: 'Disc',
             value: 4
         };
 
@@ -176,8 +176,8 @@ define(['N/record', 'N/currentRecord', 'N/ui/dialog'],
         });
 
         var options = {
-            title: "Oh shit",
-            message: "Total is:" + total + " How are dem guys payin?",
+            title: "Payment",
+            message: "Total is:" + total + " How are they payin?",
             buttons: [button1, button2, button3, button4, button5, button6, cancle]
         };
 

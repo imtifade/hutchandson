@@ -55,7 +55,7 @@ define(['N/currentRecord', 'N/ui/dialog'],
                     };
 
                     var button4 = {
-                        label: 'Discover',
+                        label: 'Disc',
                         value: 4
                     };
 
@@ -80,8 +80,8 @@ define(['N/currentRecord', 'N/ui/dialog'],
                     };
                     //combine everthing for the options for the dialog pop up
                     var options = {
-                        title: "Oh shit",
-                        message: "How are dem guys payin?",
+                        title: "Payment?",
+                        message: "How are they paying?",
                         buttons: [button1, button2, button3, button4, button5, button6, button7, cancle]
                     };
                     //do this when a dialog button is hit

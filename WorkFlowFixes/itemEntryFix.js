@@ -64,8 +64,8 @@ define(['N/currentRecord', 'N/ui/dialog'],
                 };
 
                 var options = {
-                    title: "Oh shit",
-                    message: "Looks like there is no perfered vender!!!",
+                    title: "Oh NO",
+                    message: "Looks like there is no perfered vender!",
                     buttons: [button1, button2]
                 };
 
