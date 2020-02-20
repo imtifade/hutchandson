@@ -40,14 +40,14 @@ define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
                     //if the terms are unset or set to due on reciept 
                     if (!terms || terms == 4) {
                         
-                        cashSaleGen ();
+                        cashSaleGen (createdfrom, originalSO, context);
                     
                     }
                     
                     //if it's not suppose to be a cash sale do this
                     else {
                         
-                        invoiceGen ();
+                        invoiceGen (createdfrom, context);
 
                     }
 
@@ -60,7 +60,7 @@ define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
             beforeLoad: beforeLoad
         }
 
-        function cashSaleGen (createdfrom){
+        function cashSaleGen (createdfrom, originalSO, context){
             //check if the payment type is TBD
             var paymentType = originalSO.getValue({
                 fieldId: 'custbody3'
@@ -147,7 +147,7 @@ define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
             }
         }
 
-        function invoiceGen (createdfrom) {
+        function invoiceGen (createdfrom, context) {
 
             //turn it in to an item fulfillment
             var objFulfillment = record.transform({
