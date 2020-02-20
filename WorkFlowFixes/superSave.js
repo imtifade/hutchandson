@@ -60,7 +60,7 @@ define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
             beforeLoad: beforeLoad
         }
 
-        function cashSaleGen (){
+        function cashSaleGen (createdfrom){
             //check if the payment type is TBD
             var paymentType = originalSO.getValue({
                 fieldId: 'custbody3'
@@ -147,7 +147,7 @@ define(['N/record', 'N/redirect', "N/ui/serverWidget", 'N/search', 'N/file'],
             }
         }
 
-        function invoiceGen () {
+        function invoiceGen (createdfrom) {
 
             //turn it in to an item fulfillment
             var objFulfillment = record.transform({
