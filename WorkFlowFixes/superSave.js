@@ -21,8 +21,8 @@ function runsave(record, serverWidget) {
     return returnObj;
 }
 function superSave(context) {
+    var record;
     record = recordModule;
-    serverWidget = serverWidgetModule;
     //if the record is being created (not saved yet) do this
     if (context.type == 'create') {
         //grab super save status
@@ -66,7 +66,8 @@ function superSave(context) {
 }
 
 function cashSaleGen(createdfrom, originalSO, context) {
-
+    var record;
+    var serverWidget;
     record = recordModule;
     serverWidget = serverWidgetModule;
 
@@ -157,7 +158,8 @@ function cashSaleGen(createdfrom, originalSO, context) {
 }
 
 function invoiceGen(createdfrom, context) {
-
+    var record;
+    var serverWidget;
     record = recordModule;
     serverWidget = serverWidgetModule;
 
