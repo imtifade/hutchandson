@@ -29,37 +29,25 @@ function superSave(context) {
         var superSaved = context.newRecord.getValue({
             fieldId: 'custbody_supersaved'
         });
-        //if super save is checked then do this
-        if (superSaved) {
-            //grab the internal id of the sales order the fulfillment
-            var createdfrom = context.newRecord.getValue({
-                fieldId: 'createdfrom'
-            });
-            //load the original sales order to an object
-            var originalSO = recordModule.load({
-                type: record.Type.SALES_ORDER,
-                id: createdfrom,
-                isDynamic: true,
-            });
-            //load the terms of payment
-            terms = originalSO.getValue({
-                fieldId: 'terms'
-            });
-
-            //if the terms are unset or set to due on reciept 
-            if (!terms || terms == 4) {
-
-                cashSaleGen(createdfrom, originalSO, context);
-
-            }
-
-            //if it's not suppose to be a cash sale do this
-            else {
-
-                invoiceGen(createdfrom, context);
-
-            }
-
+        //grab the internal id of the sales order the fulfillment
+        var createdfrom = context.newRecord.getValue({
+            fieldId: 'createdfrom'
+        });
+        //load the original sales order to an object
+        var originalSO = recordModule.load({
+            type: record.Type.SALES_ORDER,
+            id: createdfrom,
+            isDynamic: true,
+        });
+        //load the terms of payment
+        terms = originalSO.getValue({
+            fieldId: 'terms'
+        });
+        if (superSaved && !terms || terms == 4) {
+            cashSaleGen(createdfrom, originalSO, context);
+        }
+        else if (superSave) {
+            invoiceGen(createdfrom, context);
         }
 
     }
