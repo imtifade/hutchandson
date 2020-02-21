@@ -71,29 +71,8 @@ function cashSaleGen(createdfrom, originalSO, context) {
     record = recordModule;
     serverWidget = serverWidgetModule;
 
-    //check if the payment type is TBD
-    var paymentType = originalSO.getValue({
-        fieldId: 'custbody3'
-    });
-    //turn it in to an item fulfillment
-    var objFulfillment = record.transform({
-        fromType: record.Type.SALES_ORDER,
-        fromId: createdfrom,
-        toType: record.Type.ITEM_FULFILLMENT,
-        isDynamic: true,
-    });
-    //set ship status to shipped
-    objFulfillment.setValue({
-        fieldId: 'shipstatus',
-        value: "C",
-        ignoreFieldChange: true,
-        forceSyncSourcing: true
-    });
-    //save the fulfillment
-    var fulfillmentID = objFulfillment.save({
-        enableSourcing: true,
-        ignoreMandatoryFields: true
-    });
+    fulfillmentGen(createdfrom);
+
     //turn the same sales order in to a cash sale.
     var objCashSale = record.transform({
         fromType: record.Type.SALES_ORDER,
@@ -105,6 +84,11 @@ function cashSaleGen(createdfrom, originalSO, context) {
     var cashSaleID = objCashSale.save({
         enableSourcing: true,
         ignoreMandatoryFields: true
+    });
+
+    //check if the payment type is TBD
+    var paymentType = originalSO.getValue({
+        fieldId: 'custbody3'
     });
 
     //if it is TBD only redirect
@@ -163,25 +147,8 @@ function invoiceGen(createdfrom, context) {
     record = recordModule;
     serverWidget = serverWidgetModule;
 
-    //turn it in to an item fulfillment
-    var objFulfillment = record.transform({
-        fromType: record.Type.SALES_ORDER,
-        fromId: createdfrom,
-        toType: record.Type.ITEM_FULFILLMENT,
-        isDynamic: true,
-    });
-    //set the ship status to shipped
-    objFulfillment.setValue({
-        fieldId: 'shipstatus',
-        value: "C",
-        ignoreFieldChange: true,
-        forceSyncSourcing: true
-    });
-    //save the fulfillment
-    var fulfillmentID = objFulfillment.save({
-        enableSourcing: true,
-        ignoreMandatoryFields: true
-    });
+    fulfillmentGen(createdfrom);
+
     //turn the sales order in to an invoice
     var objInvoice = record.transform({
         fromType: record.Type.SALES_ORDER,
@@ -210,4 +177,30 @@ function invoiceGen(createdfrom, context) {
 
     field.defaultValue = redirect_value;
 
+}
+
+function fulfillmentGen(createdfrom) {
+    var record;
+    record = recordModule;
+    //turn it in to an item fulfillment
+    var objFulfillment = record.transform({
+        fromType: record.Type.SALES_ORDER,
+        fromId: createdfrom,
+        toType: record.Type.ITEM_FULFILLMENT,
+        isDynamic: true,
+    });
+    //set ship status to shipped
+    objFulfillment.setValue({
+        fieldId: 'shipstatus',
+        value: "C",
+        ignoreFieldChange: true,
+        forceSyncSourcing: true
+    });
+    //save the fulfillment
+    var fulfillmentID = objFulfillment.save({
+        enableSourcing: true,
+        ignoreMandatoryFields: true
+    });
+
+    return true;
 }
