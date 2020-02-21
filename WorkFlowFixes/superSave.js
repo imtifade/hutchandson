@@ -21,6 +21,8 @@ function runsave(record, serverWidget) {
     return returnObj;
 }
 function superSave(context) {
+    record = recordModule;
+    serverWidget = serverWidgetModule;
     //if the record is being created (not saved yet) do this
     if (context.type == 'create') {
         //grab super save status
@@ -35,7 +37,7 @@ function superSave(context) {
             });
             //load the original sales order to an object
             var originalSO = recordModule.load({
-                type: recordModule.Type.SALES_ORDER,
+                type: record.Type.SALES_ORDER,
                 id: createdfrom,
                 isDynamic: true,
             });
@@ -64,15 +66,19 @@ function superSave(context) {
 }
 
 function cashSaleGen(createdfrom, originalSO, context) {
+
+    record = recordModule;
+    serverWidget = serverWidgetModule;
+
     //check if the payment type is TBD
     var paymentType = originalSO.getValue({
         fieldId: 'custbody3'
     });
     //turn it in to an item fulfillment
-    var objFulfillment = recordModule.transform({
-        fromType: recordModule.Type.SALES_ORDER,
+    var objFulfillment = record.transform({
+        fromType: record.Type.SALES_ORDER,
         fromId: createdfrom,
-        toType: recordModule.Type.ITEM_FULFILLMENT,
+        toType: record.Type.ITEM_FULFILLMENT,
         isDynamic: true,
     });
     //set ship status to shipped
@@ -88,10 +94,10 @@ function cashSaleGen(createdfrom, originalSO, context) {
         ignoreMandatoryFields: true
     });
     //turn the same sales order in to a cash sale.
-    var objCashSale = recordModule.transform({
-        fromType: recordModule.Type.SALES_ORDER,
+    var objCashSale = record.transform({
+        fromType: record.Type.SALES_ORDER,
         fromId: createdfrom,
-        toType: recordModule.Type.CASH_SALE,
+        toType: record.Type.CASH_SALE,
         isDynamic: true,
     });
     //save the cash sale
@@ -109,7 +115,7 @@ function cashSaleGen(createdfrom, originalSO, context) {
 
         var field2 = context.form.addField({
             id: 'custpage_redirect2',
-            type: serverWidgetModule.FieldType.INLINEHTML,
+            type: serverWidget.FieldType.INLINEHTML,
             label: 'Redirect2'
         });
 
@@ -127,7 +133,7 @@ function cashSaleGen(createdfrom, originalSO, context) {
 
         var field = context.form.addField({
             id: 'custpage_redirect',
-            type: serverWidgetModule.FieldType.INLINEHTML,
+            type: serverWidget.FieldType.INLINEHTML,
             label: 'Redirect'
         });
 
@@ -140,7 +146,7 @@ function cashSaleGen(createdfrom, originalSO, context) {
 
         var field2 = context.form.addField({
             id: 'custpage_redirect2',
-            type: serverWidgetModule.FieldType.INLINEHTML,
+            type: serverWidget.FieldType.INLINEHTML,
             label: 'Redirect2'
         });
 
@@ -152,11 +158,14 @@ function cashSaleGen(createdfrom, originalSO, context) {
 
 function invoiceGen(createdfrom, context) {
 
+    record = recordModule;
+    serverWidget = serverWidgetModule;
+
     //turn it in to an item fulfillment
-    var objFulfillment = recordModule.transform({
-        fromType: recordModule.Type.SALES_ORDER,
+    var objFulfillment = record.transform({
+        fromType: record.Type.SALES_ORDER,
         fromId: createdfrom,
-        toType: recordModule.Type.ITEM_FULFILLMENT,
+        toType: record.Type.ITEM_FULFILLMENT,
         isDynamic: true,
     });
     //set the ship status to shipped
@@ -172,10 +181,10 @@ function invoiceGen(createdfrom, context) {
         ignoreMandatoryFields: true
     });
     //turn the sales order in to an invoice
-    var objInvoice = recordModule.transform({
-        fromType: recordModule.Type.SALES_ORDER,
+    var objInvoice = record.transform({
+        fromType: record.Type.SALES_ORDER,
         fromId: createdfrom,
-        toType: recordModule.Type.INVOICE,
+        toType: record.Type.INVOICE,
         isDynamic: true,
     });
     //save the invoice
@@ -192,7 +201,7 @@ function invoiceGen(createdfrom, context) {
 
     var field = context.form.addField({
         id: 'custpage_redirect',
-        type: serverWidgetModule.FieldType.INLINEHTML,
+        type: serverWidget.FieldType.INLINEHTML,
         label: 'Redirect'
     });
 
