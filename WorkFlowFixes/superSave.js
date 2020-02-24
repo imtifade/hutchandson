@@ -12,6 +12,7 @@ It throws a new line of html in the webpage to get the redirects done.
 */
 
 define(['N/record', "N/ui/serverWidget"], runsave);
+
 function runsave(record, serverWidget) {
     recordModule = record;
     serverWidgetModule = serverWidget;
@@ -20,6 +21,7 @@ function runsave(record, serverWidget) {
     returnObj.beforeLoad = superSave;
     return returnObj;
 }
+
 function superSave(context) {
     var record;
     record = recordModule;
@@ -46,8 +48,11 @@ function superSave(context) {
         if (superSaved && !terms || terms == 4) {
             cashSaleGen(createdfrom, originalSO, context);
         }
-        else if (superSave) {
+        else if (superSaved) {
             invoiceGen(createdfrom, context);
+        }
+        else{
+            return true;
         }
 
     }
@@ -102,7 +107,7 @@ function cashSaleGen(createdfrom, originalSO, context) {
 
         var printURL = 'https://1204410.app.netsuite.com/app/accounting/print/hotprint.nl?regular=T&sethotprinter=T&formnumber=136&trantype=cashsale&&id=' + cashSaleID + "&label=Cash+Sale&printtype=transaction";
 
-        var redirect_value = '<html><body><script language="javascript">window.open("' + printURL + '", "mywindow","location=1,status=1,scrollbars=1, resizable=1, directories=1, toolbar=1, titlebar=1");</script></body></html>';
+        var redirect_value = '<html><body><script language="javascript">var printWindow =window.open("' + printURL + '", "mywindow","location=0, status=0, scrollbars=1, resizable=1, titlebar=1, top=0, left=0, height=" + screen.availHeight + ", width=" + screen.availWidth);</script></body></html>';
 
         var field = context.form.addField({
             id: 'custpage_redirect',
