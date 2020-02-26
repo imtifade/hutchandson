@@ -155,17 +155,19 @@ define(['N/currentRecord', 'N/ui/dialog'], function (currentRecord, dialog) {
                     forceSyncSourcing: true
                 });
             }
-
+            //if it's a target for the TBD
             if (curRecord.type == "CASH_SALE") {
 
                 NLMultiButton_doAction('multibutton_submitter', 'saveprint');
 
             }
+            //if the actual save button is hit
             else if (result != 8 && !buttonHit) {
 
                 NLMultiButton_doAction('multibutton_submitter', 'submitter');
 
             }
+            //if the super save button was hit
             else if (result != 8 && buttonHit) {
 
                 NLMultiButton_doAction('multibutton_submitter', 'submitfulfill');
@@ -174,8 +176,11 @@ define(['N/currentRecord', 'N/ui/dialog'], function (currentRecord, dialog) {
         }
 
         function failure(reason) {
+
             console.log("Failure: " + reason);
+
         }
+        
         dialog.create(options).then(success).catch(failure);
 
         return true;
