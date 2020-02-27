@@ -154,6 +154,10 @@ define(['N/currentRecord', 'N/ui/dialog'], function (currentRecord, dialog) {
                     ignoreFieldChange: true,
                     forceSyncSourcing: true
                 });
+
+                NLMultiButton_doAction('multibutton_submitter', 'saveprint');
+
+                return true;
             }
             //if it's a target for the TBD
             if (curRecord.type == "CASH_SALE") {
@@ -180,7 +184,7 @@ define(['N/currentRecord', 'N/ui/dialog'], function (currentRecord, dialog) {
             console.log("Failure: " + reason);
 
         }
-        
+
         dialog.create(options).then(success).catch(failure);
 
         return true;
