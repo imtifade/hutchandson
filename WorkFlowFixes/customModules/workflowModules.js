@@ -1,5 +1,6 @@
 /*
 * @NApiVersion 2.x
+* @NModuleSc​o​p​e Public
 */
 
 define(['N/currentRecord', 'N/ui/dialog'], function (currentRecord, dialog) {
@@ -77,8 +78,6 @@ define(['N/currentRecord', 'N/ui/dialog'], function (currentRecord, dialog) {
         }
 
         function success(result) {
-
-            console.log (result);
 
             if (result == 1) {
 
@@ -160,7 +159,7 @@ define(['N/currentRecord', 'N/ui/dialog'], function (currentRecord, dialog) {
                 NLMultiButton_doAction('multibutton_submitter', 'saveprint');
             }
 
-            if (result!=8) {
+            if (result != 8 && result != 7) {
                 //if it's a target for the TBD
                 if (curRecord.type == "CASH_SALE") {
 
@@ -168,18 +167,19 @@ define(['N/currentRecord', 'N/ui/dialog'], function (currentRecord, dialog) {
 
                 }
                 //if the actual save button is hit
-                else if (result != 8 && !buttonHit) {
+                else if (!buttonHit) {
 
                     NLMultiButton_doAction('multibutton_submitter', 'submitter');
 
                 }
                 //if the super save button was hit
-                else if (result != 8 && buttonHit) {
+                else if (buttonHit) {
 
                     NLMultiButton_doAction('multibutton_submitter', 'submitfulfill');
 
                 }
             }
+            return true;
         }
 
         function failure(reason) {
