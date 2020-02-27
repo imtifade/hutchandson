@@ -318,6 +318,7 @@ define(['N/currentRecord', 'N/ui/dialog'],
                         else {
 
                             selected = true;
+                            
 
                         }
                     }
