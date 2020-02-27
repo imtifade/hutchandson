@@ -78,6 +78,8 @@ define(['N/currentRecord', 'N/ui/dialog'], function (currentRecord, dialog) {
 
         function success(result) {
 
+            console.log (result);
+
             if (result == 1) {
 
                 setPaymentValues('CASH');
@@ -156,26 +158,27 @@ define(['N/currentRecord', 'N/ui/dialog'], function (currentRecord, dialog) {
                 });
 
                 NLMultiButton_doAction('multibutton_submitter', 'saveprint');
-
-                return true;
             }
-            //if it's a target for the TBD
-            if (curRecord.type == "CASH_SALE") {
 
-                NLMultiButton_doAction('multibutton_submitter', 'saveprint');
+            if (result!=8) {
+                //if it's a target for the TBD
+                if (curRecord.type == "CASH_SALE") {
 
-            }
-            //if the actual save button is hit
-            else if (result != 8 && !buttonHit) {
+                    NLMultiButton_doAction('multibutton_submitter', 'saveprint');
 
-                NLMultiButton_doAction('multibutton_submitter', 'submitter');
+                }
+                //if the actual save button is hit
+                else if (result != 8 && !buttonHit) {
 
-            }
-            //if the super save button was hit
-            else if (result != 8 && buttonHit) {
+                    NLMultiButton_doAction('multibutton_submitter', 'submitter');
 
-                NLMultiButton_doAction('multibutton_submitter', 'submitfulfill');
+                }
+                //if the super save button was hit
+                else if (result != 8 && buttonHit) {
 
+                    NLMultiButton_doAction('multibutton_submitter', 'submitfulfill');
+
+                }
             }
         }
 
@@ -187,7 +190,7 @@ define(['N/currentRecord', 'N/ui/dialog'], function (currentRecord, dialog) {
 
         dialog.create(options).then(success).catch(failure);
 
-        return true;
+        return false;
 
     }
 
