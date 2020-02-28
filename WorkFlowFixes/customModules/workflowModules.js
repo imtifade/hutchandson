@@ -6,7 +6,7 @@
 define(['N/currentRecord', 'N/ui/dialog'], function (currentRecord, dialog) {
 
 
-    function paymentDialog(buttonHit) {
+    function paymentDialog(saveType) {
 
         //grab the current record
         var curRecord = currentRecord.get();
@@ -161,25 +161,31 @@ define(['N/currentRecord', 'N/ui/dialog'], function (currentRecord, dialog) {
 
             if (result != 8 && result != 7) {
                 //if it's a target for the TBD
-                if (curRecord.type == "CASH_SALE") {
+                if (saveType == "savePrint") {
 
                     NLMultiButton_doAction('multibutton_submitter', 'saveprint');
 
                 }
                 //if the actual save button is hit
-                else if (!buttonHit) {
+                else if (saveType == "save") {
 
                     NLMultiButton_doAction('multibutton_submitter', 'submitter');
 
                 }
                 //if the super save button was hit
-                else if (buttonHit) {
+                else if (saveType == "saveFulfill") {
 
                     NLMultiButton_doAction('multibutton_submitter', 'submitfulfill');
 
                 }
             }
+
+            if (result == 8){
+                return false;
+            }
+            else{
             return true;
+            }
         }
 
         function failure(reason) {

@@ -11,10 +11,7 @@
 define(['N/currentRecord','SuiteScripts/customModules/workflowModules'],
     //Callback for modules
     function (currentRecord, workflowModules) {
-
-        //this for the work around that keep the whole server from crashing. May or may not be needed anymore. Still don't touch it!
-        var selected = false;
-        //call by function from record save 
+        
         function billingCheck(context) {
             //grab the current record
             var record = currentRecord.get();
@@ -36,7 +33,7 @@ define(['N/currentRecord','SuiteScripts/customModules/workflowModules'],
                 //if terms are due on reciept or terms are blank and the payment meathod isn't cash
                 if (terms == 4 || !terms && paymentMethod != 1) {
 
-                    if (workflowModules.paymentDialog (false)) {
+                    if (workflowModules.paymentDialog (save)) {
                         return true;
                     }
                     else {

@@ -45,7 +45,7 @@ function superSave(context) {
         terms = originalSO.getValue({
             fieldId: 'terms'
         });
-        if (superSaved && !terms || terms == 4) {
+        if (superSaved && !terms || superSaved && terms == 4) {
             cashSaleGen(createdfrom, originalSO, context);
         }
         else if (superSaved) {
