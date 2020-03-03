@@ -11,6 +11,8 @@ It checks the super save status then generates the correct records with record.t
 It throws a new line of html in the webpage to get the redirects done. 
 */
 
+var recordModule, serverWidgetModule;
+
 define(['N/record', "N/ui/serverWidget"], runsave);
 
 function runsave(record, serverWidget) {
