@@ -7,9 +7,11 @@
 // release codename: ColdWaffles 
 
 //define modules
-define(['N/ui/dialog', 'N/currentRecord'],
+define(['N/ui/dialog', 'N/currentRecord', 'SuiteScripts/customModules/workflowModules'],
     //Callback for modules
-    function (dialog, currentRecord) {
+    function (dialog, currentRecord, workflowModules) {
+  
+  
         //some global variables
         var imgData;
         var imgWidth = 500;
@@ -17,9 +19,17 @@ define(['N/ui/dialog', 'N/currentRecord'],
 
         //Callback for when the signature button is hit
         function signatureButtonHit(context) {
+          
+          if (!workflowModules.errorLogging()) {
 
             //Start the signature dialog
             startSign();
+            
+            }else{
+ 
+                workflowModules.errMessage();
+
+            }
 
         }
 

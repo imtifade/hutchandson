@@ -2,9 +2,11 @@
  *@NApiVersion 2.x
  *@NScriptType UserEventScript
  */
-define(['N/sftp', 'N/record', 'N/redirect', 'N/search', 'N/file', 'N/ui/serverWidget'],
-    function (sftp, record, redirect, search, file, serverWidget) {
+define(['N/sftp', 'N/record', 'N/redirect', 'N/search', 'N/file', 'N/ui/serverWidget', 'SuiteScripts/customModules/workflowModules'],
+    function (sftp, record, redirect, search, file, serverWidget, workflowModules) {
         function beforeLoad(context) {
+          
+          if (!workflowModules.errorLogging()) {
 
             if (context.type == 'create') {
 
@@ -106,6 +108,12 @@ define(['N/sftp', 'N/record', 'N/redirect', 'N/search', 'N/file', 'N/ui/serverWi
                     });
     
                 }
+            }
+            
+            }else{
+ 
+                workflowModules.errMessage();
+
             }
 
         }
@@ -221,18 +229,18 @@ define(['N/sftp', 'N/record', 'N/redirect', 'N/search', 'N/file', 'N/ui/serverWi
 
         //Takes CSV data and the current form and fill in the information.
         function fillForm(CSVData, csvCurLineData) {
-
+			var scoot = csvCurLineData.length - 3;
             var curRecord = CSVData;
 
             curRecord.setValue({
                 fieldId: 'trackingnumbers',
-                value: csvCurLineData[1],
+                value: csvCurLineData[1 + scoot],
                 ignoreFieldChange: true
             });
 
             log.debug({
                 title: "Shipping charges:",
-                details: csvCurLineData[2]
+                details: csvCurLineData[2 + scoot]
             });
 
             if (csvCurLineData[2] != 0) {
@@ -279,14 +287,14 @@ define(['N/sftp', 'N/record', 'N/redirect', 'N/search', 'N/file', 'N/ui/serverWi
                 curRecord.setCurrentSublistValue({
                     sublistId: 'item',
                     fieldId: 'rate',
-                    value: csvCurLineData[2],
+                    value: csvCurLineData[2 + scoot],
                     ignoreFieldChange: true
                 });
 
                 curRecord.setCurrentSublistValue({
                     sublistId: 'item',
                     fieldId: 'amount',
-                    value: csvCurLineData[2],
+                    value: csvCurLineData[2 + scoot],
                     ignoreFieldChange: true
                 });
 

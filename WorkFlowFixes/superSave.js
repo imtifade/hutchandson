@@ -33,32 +33,35 @@ function superSave(context) {
         var superSaved = context.newRecord.getValue({
             fieldId: 'custbody_supersaved'
         });
-        //grab the internal id of the sales order the fulfillment
-        var createdfrom = context.newRecord.getValue({
-            fieldId: 'createdfrom'
-        });
-        //load the original sales order to an object
-        var originalSO = recordModule.load({
-            type: record.Type.SALES_ORDER,
-            id: createdfrom,
-            isDynamic: true,
-        });
-        //load the terms of payment
-        terms = originalSO.getValue({
-            fieldId: 'terms'
-        });
-        if (superSaved && !terms || superSaved && terms == 4) {
-            cashSaleGen(createdfrom, originalSO, context);
+        if (superSaved) {
+            //grab the internal id of the sales order the fulfillment
+            var createdfrom = context.newRecord.getValue({
+                fieldId: 'createdfrom'
+            });
+            //load the original sales order to an object
+            var originalSO = recordModule.load({
+                type: record.Type.SALES_ORDER,
+                id: createdfrom,
+                isDynamic: true,
+            });
+            //load the terms of payment
+            terms = originalSO.getValue({
+                fieldId: 'terms'
+            });
+            if (!terms || terms == 4) {
+                cashSaleGen(createdfrom, originalSO, context);
+            }
+            else {
+                invoiceGen(createdfrom, context);
+            }
         }
-        else if (superSaved) {
-            invoiceGen(createdfrom, context);
-        }
-        else{
+        else {
             return true;
         }
-
     }
+
 }
+
 
 function cashSaleGen(createdfrom, originalSO, context) {
     var record;

@@ -11,8 +11,9 @@
 define(['N/currentRecord','SuiteScripts/customModules/workflowModules'],
     //Callback for modules
     function (currentRecord, workflowModules) {
-        
+
         function billingCheck(context) {
+            console.log ("1");
             //grab the current record
             var record = currentRecord.get();
             //grab super save status
@@ -33,7 +34,7 @@ define(['N/currentRecord','SuiteScripts/customModules/workflowModules'],
                 //if terms are due on reciept or terms are blank and the payment meathod isn't cash
                 if (terms == 4 || !terms && paymentMethod != 1) {
 
-                    if (workflowModules.paymentDialog (save)) {
+                    if (workflowModules.paymentDialog ('save')) {
                         return true;
                     }
                     else {

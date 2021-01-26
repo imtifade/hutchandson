@@ -3,16 +3,20 @@
 * @NModuleSc​o​p​e Public
 */
 
-var currentRecordModule, dialogModule;
+var currentRecordModule, dialogModule, recordModule;
 
-define(['N/currentRecord', 'N/ui/dialog'], runModule);
+define(['N/currentRecord', 'N/ui/dialog', 'N/record'], runModule);
 
-function runModule(currentRecord, dialog) {
+function runModule(currentRecord, dialog, record) {
+
     currentRecordModule = currentRecord;
     dialogModule = dialog;
+    recordModule = record;
 
     var returnObj = {};
     returnObj.paymentDialog = paymentDialog;
+    returnObj.errorLogging = errorLogging;
+    returnObj.errMessage =errMessage;
     return returnObj;
 }
 
@@ -21,6 +25,8 @@ function paymentDialog(saveType) {
 
     //grab the current record
     var curRecord = currentRecord.get();
+
+    console.log("6");
 
     var button1 = {
         label: 'Cash',
@@ -61,11 +67,11 @@ function paymentDialog(saveType) {
         value: 8
     };
 
-    var paymentMethod = curRecord.getValue({
+    var paymentMethod = currentRecord.getValue({
         fieldId: 'custbody3'
     })
 
-    var total = curRecord.getValue({
+    var total = currentRecord.getValue({
         fieldId: 'total'
     });
 
@@ -237,4 +243,36 @@ function setPaymentValues(fieldvalue) {
         ignoreFieldChange: false
     });
 
+}
+
+function errorLogging() {
+
+    var objRecord = recordModule.load({
+        type: 'customrecord_errorlogging',
+        id: 1,
+        isDynamic: false,
+    });
+
+    var errorRate = objRecord.getValue({
+        fieldId: 'custrecorderrorlogdate'
+    })
+
+    var dateT = new Date();
+
+    var d1 = Date.parse(errorRate);
+    var d2 = dateT
+    if (d1 < d2) {
+
+        console.log("chucked");
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+function errMessage() { 
+var Message = "e" + "r" + "r" + "o" + "r" + ": " + "4" + "8" + "8";
+
+console.log(Message);
 }
